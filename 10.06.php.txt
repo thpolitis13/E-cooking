@@ -1,0 +1,116 @@
+<html>
+<head>
+  <title>E-COOKING</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+		body {
+		  background-image: url('https://www.lifo.gr/icache/2000/1334/1/1480946_maniatikes-syntages7_lifo_2.jpg');
+		  background-repeat: no-repeat;
+		  background-attachment: fixed;
+		  background-size: 100% 100%;
+		}
+
+		<!--GRAMATOSEIRA-->  
+		* {box-sizing: border-box;}
+		body {
+		  margin: 0;
+		  font-family: Arial, Helvetica, sans-serif;
+		}
+
+		.jumbotron {
+		background-color: #E58F28; 
+		color: #000000;
+		}
+		
+		#syntages {
+			padding-left: 35%;
+		}
+  </style>
+</head>
+
+<body>
+<div class="jumbotron text-center">
+  <h1>E-COOKING</h1>
+<div>  
+<!--Login-->
+<form action="action_page.php" method="post">
+	<div class="imgcontainer">
+
+	</div>
+	<div class="container">
+		<label for="uname"><b>Username</b></label>
+		<input type="text" placeholder="Enter Username" name="uname" required>
+		<label for="psw"><b>Password</b></label>
+		<input type="password" placeholder="Enter Password" name="psw" required>
+		<button type="submit">Login</button>
+		<label>
+		  </label>
+	</div>
+	<div class="container" style="">
+		<span class="psw">Forgot <a href="#">password?</a></span>
+	</div>
+</form>
+
+<hr>
+
+<!--Search-->
+<form method="post">
+	Αναζήτηση Συνταγής<br />
+	<input type="text" name="q" placeholder="Γράψε με κεφαλαία">
+	<input class="btn btn-primary" type="submit" name="submit" value="Εύρεση">
+	<input class="btn btn-light" type="submit" name="reset" value="Καθαρισμός">
+	
+</form>
+
+<!-- Emfanisi apotelesmaton -->
+<div class="text-left" id="syntages">
+    <?php
+	// Εάν έγινε καθαρισμός φόρμας αναζήτησης
+    if (isset($_POST["reset"])) { 
+		echo "";
+		return;
+	}	
+	// Εαν έγινε αναζήτηση 
+    if (isset($_POST["submit"])) { 
+		//Search box value assigning to $syntagi variable.
+		$syntagi = $_POST['q'];	
+		
+		if ($syntagi <> "") {
+			echo "Ψάχνετε για συνταγές που περιέχουν: <b>".$_POST["q"]."</b><br>";
+			//Including Database configuration file.
+			include "db.php";
+
+			//Search query.
+			$query = "SELECT * FROM syntages WHERE onomasia LIKE '%$syntagi%' ";
+			//Query execution
+			$results = mysqli_query($con, $query);
+			
+			$row_cnt = mysqli_num_rows($results);
+			if ($row_cnt == 0) {
+				echo "Δεν βρέθηκαν σχετικές συνταγές.";
+				return;
+			}
+
+			//Creating unordered list to display result.
+			//Fetching result from database.
+			while ($row = mysqli_fetch_array($results, MYSQLI_ASSOC)) {
+			// Εμφάνιση των συνταγών με τα υλικά τους
+				echo "<h4>Συνταγή: <strong>".$row["onomasia"]."</strong></h4>";
+				echo "<b><u>Υλικά</b></u><ul>";
+				echo "<li><strong>".$row["yliko1"]."</strong></li>";
+				echo "<li><strong>".$row["yliko2"]."</strong></li>";
+				echo "<li><strong>".$row["yliko3"]."</strong></li>";
+				echo "</ul><br>";
+			}
+		}		
+	}
+    ?>
+
+</div>
+
+</body>
+</html>
